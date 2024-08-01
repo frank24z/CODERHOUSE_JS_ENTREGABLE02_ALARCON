@@ -1,0 +1,66 @@
+/* Estilos generales para el cuerpo de la página */
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+/* Estilos para el título principal */
+h1 {
+    color: #333;
+}
+
+/* Estilos para el botón */
+button {
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Efecto de hover para el botón */
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos para la imagen principal */
+#imagenPrincipal {
+    width: 200px;
+    margin-bottom: 20px;
+}
+
+/* Estilos para la lista de personas */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* Estilos para cada elemento de la lista */
+li {
+    background: #f0f0f0;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Estilos para el botón de eliminar */
+.botonEliminar {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Efecto de hover para el botón de eliminar */
+.botonEliminar:hover {
+    background: #d43f3f;
+}
