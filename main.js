@@ -12,7 +12,7 @@ document.getElementById('botonCalcularEdad').addEventListener('click', () => {
 
     const edad = calcularEdad(fechaNacimiento, fechaActualArray); 
 
-    //console.log(`Resultados: Años: ${edad.años}, Meses: ${edad.meses}, Días: ${edad.días}`);
+    console.log(`Resultados: Años: ${edad.años}, Meses: ${edad.meses}, Días: ${edad.días}`);
     alert(`Usted tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.`);
 
     agregarPersonaAlListado(nombre, edad); 
@@ -27,7 +27,7 @@ function obtenerNombre() {
     do {
         nombre = prompt("¿Cual es tu nombre?"); 
         if (!nombre) {
-            alert("El nombre no puede estar vacío.");
+            alert("Debes ingresar un nombre.");
             intentos++; 
             if (intentos >= 3) {
                 alert("Superaste los intentos."); 
