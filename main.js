@@ -58,7 +58,7 @@ function obtenerFecha() {
     } while (true);
 }
 
-
+//Validar fechas correctas
 function esFechaValida(dia, mes, año) {
     const date = new Date(año, mes - 1, dia);
     return date.getFullYear() === año && date.getMonth() + 1 === mes && date.getDate() === dia; 
