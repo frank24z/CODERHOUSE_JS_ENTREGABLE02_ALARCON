@@ -1,77 +1,75 @@
-// Agrega un evento al botón de calcular edad para iniciar el proceso
+
+
 document.getElementById('botonCalcularEdad').addEventListener('click', () => {
-    const nombre = obtenerNombre(); // Obtener el nombre del usuario
-    if (!nombre) return; // Salir si no se obtiene un nombre válido
+    const nombre = obtenerNombre();
+    if (!nombre) return; 
 
-    const fechaNacimiento = obtenerFecha("nacimiento"); // Obtener la fecha de nacimiento
-    if (!fechaNacimiento) return; // Salir si no se obtiene una fecha válida
+    const fechaNacimiento = obtenerFecha("nacimiento"); 
+    if (!fechaNacimiento) return; 
 
-    const fechaActual = new Date(); // Obtener la fecha actual
-    const fechaActualArray = [fechaActual.getFullYear(), fechaActual.getMonth() + 1, fechaActual.getDate()]; // Convertir la fecha actual a un array
+    const fechaActual = new Date(); // Traer fecha actual
+    const fechaActualArray = [fechaActual.getFullYear(), fechaActual.getMonth() + 1, fechaActual.getDate()]; 
 
-    const edad = calcularEdad(fechaNacimiento, fechaActualArray); // Calcular la edad
+    const edad = calcularEdad(fechaNacimiento, fechaActualArray); 
 
-    console.log(`Resultados: Años: ${edad.años}, Meses: ${edad.meses}, Días: ${edad.días}`);
-    alert(`Usted tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.`); // Mostrar la edad calculada
+    //console.log(`Resultados: Años: ${edad.años}, Meses: ${edad.meses}, Días: ${edad.días}`);
+    alert(`Usted tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.`);
 
-    agregarPersonaAlListado(nombre, edad); // Agregar la persona al listado
-    guardarConsulta(nombre, fechaNacimiento, fechaActualArray, edad); // Guardar la consulta en el Local Storage
-    mostrarConsultasGuardadas(); // Mostrar las consultas guardadas actualizadas
+    agregarPersonaAlListado(nombre, edad); 
+    guardarConsulta(nombre, fechaNacimiento, fechaActualArray, edad);
+    mostrarConsultasGuardadas();
 });
 
-// Función para obtener el nombre del usuario, con validación de entradas y un límite de 3 intentos
+
 function obtenerNombre() {
     let nombre;
     let intentos = 0;
     do {
-        nombre = prompt("Ingresa tu nombre:"); // Pedir al usuario que ingrese su nombre
+        nombre = prompt("¿Cual es tu nombre?"); 
         if (!nombre) {
-            alert("El nombre no puede estar vacío. Inténtalo de nuevo."); // Alerta si el nombre está vacío
-            intentos++; // Incrementar el contador de intentos
+            alert("El nombre no puede estar vacío.");
+            intentos++; 
             if (intentos >= 3) {
-                alert("Has superado el número máximo de intentos."); // Alerta si se alcanzan 3 intentos
-                return null; // Salir de la función y devolver null
+                alert("Superaste los intentos."); 
+                return null;
             }
         }
     } while (!nombre);
-    return nombre; // Devolver el nombre válido
+    return nombre; 
 }
 
-// Función para obtener una fecha del usuario, con validación de entradas y un límite de 3 intentos
-function obtenerFecha(tipo) {
+function obtenerFecha() {
     let fecha, dia, mes, año;
     let intentos = 0;
     do {
-        fecha = prompt(`Ingresa tu fecha de ${tipo} en formato DD-MM-YYYY (Ej: 17-01-1994):`); // Pedir la fecha
+        fecha = prompt("Ingresa tu fecha de nacimiento en formato DD-MM-YYYY (Ej: 17-01-1994):"); 
         if (fecha) {
-            [dia, mes, año] = fecha.split('-').map(Number); // Dividir la fecha en día, mes y año
-            if (esFechaValida(dia, mes, año) && !esFechaFutura(dia, mes, año)) { // Validar la fecha
-                return [año, mes, dia]; // Devolver la fecha válida como un array
+            [dia, mes, año] = fecha.split('-').map(Number);
+            if (esFechaValida(dia, mes, año) && !esFechaFutura(dia, mes, año)) { 
+                return [año, mes, dia]; 
             }
         }
-        alert("Fecha no válida o en el futuro. Inténtalo de nuevo."); // Alerta si la fecha no es válida o es futura
-        intentos++; // Incrementar el contador de intentos
-        if (intentos >= 3) {
-            alert("Has superado el número máximo de intentos."); // Alerta si se alcanzan 3 intentos
-            return null; // Salir de la función y devolver null
+        alert("Fecha no valida. Vuelve a ingresar."); 
+        intentos++;
+        if (intentos >= 2) {
+            alert("Superaste los intentos.");
+            return null;
         }
     } while (true);
 }
 
-// Función para validar una fecha
+
 function esFechaValida(dia, mes, año) {
-    const date = new Date(año, mes - 1, dia); // Crear un objeto Date
-    return date.getFullYear() === año && date.getMonth() + 1 === mes && date.getDate() === dia; // Comprobar si la fecha es válida
+    const date = new Date(año, mes - 1, dia);
+    return date.getFullYear() === año && date.getMonth() + 1 === mes && date.getDate() === dia; 
 }
 
-// Función para verificar si una fecha es futura
 function esFechaFutura(dia, mes, año) {
-    const fechaIngresada = new Date(año, mes - 1, dia); // Crear un objeto Date para la fecha ingresada
-    const fechaActual = new Date(); // Obtener la fecha actual
-    return fechaIngresada > fechaActual; // Devolver true si la fecha ingresada es futura
+    const fechaIngresada = new Date(año, mes - 1, dia);
+    const fechaActual = new Date(); 
+    return fechaIngresada > fechaActual; 
 }
 
-// Función para calcular la edad en años, meses y días
 function calcularEdad(fechaNacimiento, fechaActual) {
     const [añoNacimiento, mesNacimiento, diaNacimiento] = fechaNacimiento;
     const [añoActual, mesActual, diaActual] = fechaActual;
@@ -90,55 +88,55 @@ function calcularEdad(fechaNacimiento, fechaActual) {
         edadAños--;
     }
 
-    return { años: edadAños, meses: edadMeses, días: edadDías }; // Devolver la edad calculada
+    return { años: edadAños, meses: edadMeses, días: edadDías };
 }
 
-// Función para agregar una persona al listado en el DOM
+// DOM CLASE SEMANA 7
 function agregarPersonaAlListado(nombre, edad) {
     const listaPersonas = document.getElementById('listaPersonas');
     const li = document.createElement('li');
     const botonEliminar = document.createElement('button');
     botonEliminar.textContent = "Eliminar";
     botonEliminar.classList.add('botonEliminar');
-    botonEliminar.addEventListener('click', () => eliminarConsulta(nombre)); // Agregar evento para eliminar la consulta
+    botonEliminar.addEventListener('click', () => eliminarConsulta(nombre));
 
-    li.textContent = `${nombre} tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.`;
+    li.textContent = '${nombre} tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.';
     li.appendChild(botonEliminar);
-    listaPersonas.appendChild(li); // Añadir el elemento li al listado
+    listaPersonas.appendChild(li);
 }
 
-// Función para guardar una consulta en el Local Storage
+//Guardar en Local
 function guardarConsulta(nombre, fechaNacimiento, fechaActual, edad) {
-    const consultas = JSON.parse(localStorage.getItem('consultas')) || []; // Obtener las consultas existentes o crear un array vacío
-    consultas.push({ nombre, fechaNacimiento, fechaActual, edad }); // Añadir la nueva consulta
-    localStorage.setItem('consultas', JSON.stringify(consultas)); // Guardar las consultas actualizadas en el Local Storage
+    const consultas = JSON.parse(localStorage.getItem('consultas')) || [];
+    consultas.push({ nombre, fechaNacimiento, fechaActual, edad }); 
+    localStorage.setItem('consultas', JSON.stringify(consultas)); 
 }
 
-// Función para mostrar las consultas guardadas desde el Local Storage
+//Mostrar el local
 function mostrarConsultasGuardadas() {
-    const consultas = JSON.parse(localStorage.getItem('consultas')) || []; // Obtener las consultas guardadas
+    const consultas = JSON.parse(localStorage.getItem('consultas')) || [];
     const listaPersonas = document.getElementById('listaPersonas');
-    listaPersonas.innerHTML = ''; // Limpiar la lista antes de mostrar
+    listaPersonas.innerHTML = ''; 
     consultas.forEach(consulta => {
         const li = document.createElement('li');
         const botonEliminar = document.createElement('button');
         botonEliminar.textContent = "Eliminar";
         botonEliminar.classList.add('botonEliminar');
-        botonEliminar.addEventListener('click', () => eliminarConsulta(consulta.nombre)); // Agregar evento para eliminar la consulta
+        botonEliminar.addEventListener('click', () => eliminarConsulta(consulta.nombre)); 
 
         li.textContent = `${consulta.nombre} tiene ${consulta.edad.años} años, ${consulta.edad.meses} meses y ${consulta.edad.días} días.`;
         li.appendChild(botonEliminar);
-        listaPersonas.appendChild(li); // Añadir el elemento li al listado
+        listaPersonas.appendChild(li); 
     });
 }
 
-// Función para eliminar una consulta del Local Storage y actualizar el listado
+
 function eliminarConsulta(nombre) {
-    let consultas = JSON.parse(localStorage.getItem('consultas')) || []; // Obtener las consultas guardadas
-    consultas = consultas.filter(consulta => consulta.nombre !== nombre); // Filtrar la consulta a eliminar
-    localStorage.setItem('consultas', JSON.stringify(consultas)); // Guardar las consultas actualizadas en el Local Storage
-    mostrarConsultasGuardadas(); // Actualizar el listado mostrado
+    let consultas = JSON.parse(localStorage.getItem('consultas')) || []; 
+    consultas = consultas.filter(consulta => consulta.nombre !== nombre); 
+    localStorage.setItem('consultas', JSON.stringify(consultas));
+    mostrarConsultasGuardadas(); 
 }
 
-// Mostrar las consultas guardadas al cargar la página
+//Mostrar el DOM
 document.addEventListener('DOMContentLoaded', mostrarConsultasGuardadas);
