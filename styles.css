@@ -34,6 +34,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
+  
 }
 
 .banner-texts h1 {
@@ -41,8 +42,12 @@ main {
     color: white;
     text-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
     margin: 0;
+    transition: color 0.5s ease, text-decoration 0.3s ease;
 }
 
+.banner-texts h1:hover {
+    color: yellow;
+}
 
 button {
     padding: 10px 20px;
