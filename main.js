@@ -13,7 +13,7 @@ document.getElementById('botonCalcularEdad').addEventListener('click', () => {
     const edad = calcularEdad(fechaNacimiento, fechaActualArray); 
 
     //console.log(`Resultados: Años: ${edad.años}, Meses: ${edad.meses}, Días: ${edad.días}`);
-    alert(`Usted tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.`);
+    alert('Usted tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.');
 
     agregarPersonaAlListado(nombre, edad); 
     guardarConsulta(nombre, fechaNacimiento, fechaActualArray, edad);
