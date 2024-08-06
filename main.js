@@ -94,7 +94,7 @@ function agregarPersonaAlListado(nombre, edad) {
     botonEliminar.classList.add('botonEliminar');
     botonEliminar.addEventListener('click', () => eliminarConsulta(nombre));
 
-    li.textContent = `${nombre} tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.`;
+    li.textContent = '${nombre} tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.';
     li.appendChild(botonEliminar);
     listaPersonas.appendChild(li);
 }
