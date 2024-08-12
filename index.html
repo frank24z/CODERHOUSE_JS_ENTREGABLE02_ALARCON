@@ -14,7 +14,17 @@
                 <h1 class="text0">CALCULADORA DE EDAD EXACTA CON JS</h1>
             </div>
         </div>
-        <button id="botonCalcularEdad">CALCULAR EDAD</button>
+        
+        <form id="formularioEdad">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" required>
+            
+            <label for="fechaNacimiento">Fecha de Nacimiento (DD-MM-YYYY):</label>
+            <input type="text" id="fechaNacimiento" required>
+            
+            <button type="submit">CALCULAR EDAD</button>
+        </form>
+        
         <ul id="listaPersonas"></ul>
     </main>
     <script src="main.js"></script>

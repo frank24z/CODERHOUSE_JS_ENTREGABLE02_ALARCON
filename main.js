@@ -1,14 +1,16 @@
-document.getElementById('botonCalcularEdad').addEventListener('click', () => {
-    const nombre = obtenerNombre();
-    if (!nombre) return;
-
-    const fechaNacimiento = obtenerFecha();
-    if (!fechaNacimiento) return;
-
+document.getElementById('formularioEdad').addEventListener('submit', (e) => {
+    e.preventDefault(); // EVITAR RECARGAR LA PAGINA, AL USAR FORMULARIO y NO PROMPTS
+    
+    const nombre = document.getElementById('nombre').value;
+    const fechaNacimiento = document.getElementById('fechaNacimiento').value.split('-').map(Number);
+    
+    if (!esFechaValida(fechaNacimiento[0], fechaNacimiento[1], fechaNacimiento[2]) || esFechaFutura(fechaNacimiento[0], fechaNacimiento[1], fechaNacimiento[2])) {
+        alert("Fecha no válida. Por favor, vuelve a ingresar.");
+        return;
+    }
+    
     const fechaActual = new Date();
-    const fechaActualArray = [fechaActual.getFullYear(), fechaActual.getMonth() + 1, fechaActual.getDate()];
-
-    const edad = calcularEdad(fechaNacimiento, fechaActualArray);
+    const edad = calcularEdad(new Date(fechaNacimiento[2], fechaNacimiento[1] - 1, fechaNacimiento[0]), fechaActual);
 
     alert(`Usted tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.`);
 
@@ -16,43 +18,6 @@ document.getElementById('botonCalcularEdad').addEventListener('click', () => {
     guardarConsulta(nombre, fechaNacimiento, edad);
     mostrarConsultasGuardadas();
 });
-
-function obtenerNombre() {
-    let nombre;
-    let intentos = 0;
-    do {
-        nombre = prompt("¿Cuál es tu nombre?");
-        if (!nombre) {
-            alert("Debes ingresar un nombre.");
-            intentos++;
-            if (intentos >= 3) {
-                alert("Superaste los intentos.");
-                return null;
-            }
-        }
-    } while (!nombre);
-    return nombre;
-}
-
-function obtenerFecha() {
-    let fecha, dia, mes, año;
-    let intentos = 0;
-    do {
-        fecha = prompt("Ingresa tu fecha de nacimiento en formato DD-MM-YYYY (Ej: 17-01-1994):");
-        if (fecha) {
-            [dia, mes, año] = fecha.split('-').map(Number);
-            if (esFechaValida(dia, mes, año) && !esFechaFutura(dia, mes, año)) {
-                return [año, mes, dia];
-            }
-        }
-        alert("Fecha no válida. Vuelve a ingresar.");
-        intentos++;
-        if (intentos >= 2) {
-            alert("Superaste los intentos.");
-            return null;
-        }
-    } while (true);
-}
 
 function esFechaValida(dia, mes, año) {
     const date = new Date(año, mes - 1, dia);
@@ -66,21 +31,19 @@ function esFechaFutura(dia, mes, año) {
 }
 
 function calcularEdad(fechaNacimiento, fechaActual) {
-    const [añoNacimiento, mesNacimiento, diaNacimiento] = fechaNacimiento;
-    const [añoActual, mesActual, diaActual] = fechaActual;
-
-    let edadAños = añoActual - añoNacimiento;
-    let edadMeses = mesActual - mesNacimiento;
-    let edadDías = diaActual - diaNacimiento;
+    let edadAños = fechaActual.getFullYear() - fechaNacimiento.getFullYear();
+    let edadMeses = fechaActual.getMonth() - fechaNacimiento.getMonth();
+    let edadDías = fechaActual.getDate() - fechaNacimiento.getDate();
 
     if (edadDías < 0) {
-        edadDías += 30;
         edadMeses--;
+        const ultimoDiaMesAnterior = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 0).getDate();
+        edadDías += ultimoDiaMesAnterior;
     }
 
     if (edadMeses < 0) {
-        edadMeses += 12;
         edadAños--;
+        edadMeses += 12;
     }
 
     return { años: edadAños, meses: edadMeses, días: edadDías };
@@ -94,7 +57,7 @@ function agregarPersonaAlListado(nombre, edad) {
     botonEliminar.classList.add('botonEliminar');
     botonEliminar.addEventListener('click', () => eliminarConsulta(nombre));
 
-    li.textContent = '${nombre} tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.';
+    li.textContent = `${nombre} tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.`;
     li.appendChild(botonEliminar);
     listaPersonas.appendChild(li);
 }
