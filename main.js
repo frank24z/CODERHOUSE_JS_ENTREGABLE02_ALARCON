@@ -1,69 +1,92 @@
-document.getElementById('formularioEdad').addEventListener('submit', (e) => {
-    e.preventDefault(); // EVITAR RECARGAR LA PAGINA, AL USAR FORMULARIO y NO PROMPTS
-    
-    const nombre = document.getElementById('nombre').value;
-    const fechaNacimiento = document.getElementById('fechaNacimiento').value.split('-').map(Number);
-    
-    if (!esFechaValida(fechaNacimiento[0], fechaNacimiento[1], fechaNacimiento[2]) || esFechaFutura(fechaNacimiento[0], fechaNacimiento[1], fechaNacimiento[2])) {
-        alert("Fecha no válida. Por favor, vuelve a ingresar.");
-        return;
+$(function() {
+    // Rellenar los selects de días y años
+    for (let i = 1; i <= 31; i++) {
+        $('#dia').append(`<option value="${i}">${i}</option>`);
     }
-    
-    const fechaActual = new Date();
-    const edad = calcularEdad(new Date(fechaNacimiento[2], fechaNacimiento[1] - 1, fechaNacimiento[0]), fechaActual);
 
-    alert(`Usted tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.`);
+    const anoActual = new Date().getFullYear();
+    for (let i = anoActual; i >= 1900; i--) {
+        $('#ano').append(`<option value="${i}">${i}</option>`);
+    }
 
-    agregarPersonaAlListado(nombre, edad);
-    guardarConsulta(nombre, fechaNacimiento, edad);
-    mostrarConsultasGuardadas();
+    $("#formularioEdad").on("submit", async function(e) {
+        e.preventDefault();
+        
+        const nombre = $("#nombre").val();
+        const dia = parseInt($("#dia").val());
+        const mes = parseInt($("#mes").val());
+        const ano = parseInt($("#ano").val());
+        
+        if (!esFechaValida(dia, mes, ano) || esFechaFutura(dia, mes, ano)) {
+            mostrarError("Fecha no válida. Por favor, vuelve a ingresar.");
+            return;
+        }
+
+        try {
+            const fechaActual = await obtenerFechaActual();
+            const edad = calcularEdad(new Date(ano, mes - 1, dia), fechaActual);
+
+            mostrarMensaje(`Usted tiene ${edad.anos} años, ${edad.meses} meses y ${edad.dias} días.`);
+            
+            agregarPersonaAlListado(nombre, edad);
+            guardarConsulta(nombre, [dia, mes, ano], edad);
+            mostrarConsultasGuardadas();
+        } catch (error) {
+            mostrarError("Error al obtener la fecha actual. Intenta de nuevo más tarde.");
+        }
+    });
 });
 
-function esFechaValida(dia, mes, año) {
-    const date = new Date(año, mes - 1, dia);
-    return date.getFullYear() === año && date.getMonth() + 1 === mes && date.getDate() === dia;
+// Funciones auxiliares para el cálculo de la edad
+function esFechaValida(dia, mes, ano) {
+    const date = new Date(ano, mes - 1, dia);
+    return date.getFullYear() === ano && date.getMonth() + 1 === mes && date.getDate() === dia;
 }
 
-function esFechaFutura(dia, mes, año) {
-    const fechaIngresada = new Date(año, mes - 1, dia);
+function esFechaFutura(dia, mes, ano) {
+    const fechaIngresada = new Date(ano, mes - 1, dia);
     const fechaActual = new Date();
     return fechaIngresada > fechaActual;
 }
 
+async function obtenerFechaActual() {
+    const response = await fetch('https://worldtimeapi.org/api/timezone/America/Santiago');
+    const data = await response.json();
+    return new Date(data.datetime);
+}
+
 function calcularEdad(fechaNacimiento, fechaActual) {
-    let edadAños = fechaActual.getFullYear() - fechaNacimiento.getFullYear();
-    let edadMeses = fechaActual.getMonth() - fechaNacimiento.getMonth();
-    let edadDías = fechaActual.getDate() - fechaNacimiento.getDate();
+    let anos = fechaActual.getFullYear() - fechaNacimiento.getFullYear();
+    let meses = fechaActual.getMonth() - fechaNacimiento.getMonth();
+    let dias = fechaActual.getDate() - fechaNacimiento.getDate();
 
-    if (edadDías < 0) {
-        edadMeses--;
+    if (dias < 0) {
+        meses--;
         const ultimoDiaMesAnterior = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 0).getDate();
-        edadDías += ultimoDiaMesAnterior;
+        dias += ultimoDiaMesAnterior;
     }
 
-    if (edadMeses < 0) {
-        edadAños--;
-        edadMeses += 12;
+    if (meses < 0) {
+        anos--;
+        meses += 12;
     }
 
-    return { años: edadAños, meses: edadMeses, días: edadDías };
+    return { anos: anos, meses: meses, dias: dias };
 }
 
 function agregarPersonaAlListado(nombre, edad) {
-    const listaPersonas = document.getElementById('listaPersonas');
-    const li = document.createElement('li');
-    const botonEliminar = document.createElement('button');
-    botonEliminar.textContent = "Eliminar";
-    botonEliminar.classList.add('botonEliminar');
-    botonEliminar.addEventListener('click', () => eliminarConsulta(nombre));
+    const listaPersonas = $("#listaPersonas");
+    const li = $("<li></li>").text(`${nombre} tiene ${edad.anos} años, ${edad.meses} meses y ${edad.dias} días.`);
+    const botonEliminar = $("<button></button>").text("Eliminar").addClass("botonEliminar").on("click", function() {
+        eliminarConsulta(nombre);
+    });
 
-    li.textContent = `${nombre} tiene ${edad.años} años, ${edad.meses} meses y ${edad.días} días.`;
-    li.appendChild(botonEliminar);
-    listaPersonas.appendChild(li);
+    li.append(botonEliminar);
+    listaPersonas.append(li);
 }
 
 function guardarConsulta(nombre, fechaNacimiento, edad) {
-    const nuevaConsulta = `${nombre},${fechaNacimiento.join('-')},${edad.años},${edad.meses},${edad.días}`;
+    const nuevaConsulta = `${nombre},${fechaNacimiento.join('-')},${edad.anos},${edad.meses},${edad.dias}`;
     let consultas = localStorage.getItem('consultas') || "";
     consultas += (consultas ? ";" : "") + nuevaConsulta;
     localStorage.setItem('consultas', consultas);
@@ -71,20 +94,18 @@ function guardarConsulta(nombre, fechaNacimiento, edad) {
 
 function mostrarConsultasGuardadas() {
     const consultas = localStorage.getItem('consultas') || "";
-    const listaPersonas = document.getElementById('listaPersonas');
-    listaPersonas.innerHTML = '';
+    const listaPersonas = $("#listaPersonas");
+    listaPersonas.empty();
     if (consultas) {
         consultas.split(';').forEach(consulta => {
-            const [nombre, fechaNacimiento, años, meses, días] = consulta.split(',');
-            const li = document.createElement('li');
-            const botonEliminar = document.createElement('button');
-            botonEliminar.textContent = "Eliminar";
-            botonEliminar.classList.add('botonEliminar');
-            botonEliminar.addEventListener('click', () => eliminarConsulta(nombre));
+            const [nombre, fechaNacimiento, anos, meses, dias] = consulta.split(',');
+            const li = $("<li></li>").text(`${nombre} tiene ${anos} años, ${meses} meses y ${dias} días.`);
+            const botonEliminar = $("<button></button>").text("Eliminar").addClass("botonEliminar").on("click", function() {
+                eliminarConsulta(nombre);
+            });
 
-            li.textContent = `${nombre} tiene ${años} años, ${meses} meses y ${días} días.`;
-            li.appendChild(botonEliminar);
-            listaPersonas.appendChild(li);
+            li.append(botonEliminar);
+            listaPersonas.append(li);
         });
     }
 }
@@ -96,4 +117,15 @@ function eliminarConsulta(nombre) {
     mostrarConsultasGuardadas();
 }
 
-document.addEventListener('DOMContentLoaded', mostrarConsultasGuardadas);
+function mostrarMensaje(mensaje) {
+    alert(mensaje);
+}
+
+function mostrarError(error) {
+    alert(error);
+}
+
+$(document).ready(function() {
+    mostrarConsultasGuardadas();
+});
+
